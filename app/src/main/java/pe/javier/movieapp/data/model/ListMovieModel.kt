@@ -1,16 +1,18 @@
 package pe.javier.movieapp.data.model
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class ListMovieModel(
-    @SerializedName("dates")
+    @SerialName("dates")
     val dates: DatesModel,
-    @SerializedName("page")
+    @SerialName("page")
     val page: Int,
-    @SerializedName("results")
+    @SerialName("results")
     val movies: List<MovieModel>,
-    @SerializedName("total_pages")
+    @SerialName("total_pages")
     val totalPages: Int,
-    @SerializedName("total_results")
+    @SerialName("total_results")
     val totalResults: Int
 )

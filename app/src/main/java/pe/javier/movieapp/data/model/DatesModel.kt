@@ -1,10 +1,12 @@
 package pe.javier.movieapp.data.model
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class DatesModel(
-    @SerializedName("maximum")
+    @SerialName("maximum")
     val maximum: String,
-    @SerializedName("minimum")
+    @SerialName("minimum")
     val minimum: String
 )
