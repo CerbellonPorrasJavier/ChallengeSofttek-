@@ -4,7 +4,7 @@ import pe.javier.movieapp.data.database.entities.MovieEntity
 import pe.javier.movieapp.data.model.MovieModel
 
 data class Movie(
-    val id: Int,
+    val id: Long,
     val title: String,
     val posterPath: String,
     val overview: String,

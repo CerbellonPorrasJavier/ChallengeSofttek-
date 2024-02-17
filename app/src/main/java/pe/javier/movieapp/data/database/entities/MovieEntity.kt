@@ -9,7 +9,7 @@ import pe.javier.movieapp.domain.model.Movie
 data class MovieEntity(
     @PrimaryKey(autoGenerate = false)
     @ColumnInfo(name = "id")
-    val id: Int,
+    val id: Long,
     @ColumnInfo(name = "title")
     val title: String,
     @ColumnInfo(name = "overview")

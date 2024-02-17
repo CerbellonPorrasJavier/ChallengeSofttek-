@@ -10,7 +10,7 @@ class GetMovieListUseCase @Inject constructor(
 ) {
     suspend operator fun invoke(page: Int = 1, apiKey: String): ListMovie {
         val movieList = repository.getAllMoviesFromApi(page = page, apiKey = apiKey)
-        return if (movieList?.movies!!.isNotEmpty()) {
+        return if (movieList?.movies != null && movieList.movies.isEmpty()) {
             repository.insertMovies(movieList.movies.map { it.toDatabase() })
             movieList
         } else {

@@ -50,6 +50,7 @@ class MovieViewModel @Inject constructor(
     fun getMovies(page: Int = 1, apiKey: String) {
         viewModelScope.launch {
             movieUiState = MovieUiState.Loading
+            setIsNotSelectedMovie()
             movieUiState = try {
                 val movieList = getMovieListUseCase(page = page, apiKey = apiKey)
                 _uiState.update { currentState ->
@@ -84,7 +85,7 @@ class MovieViewModel @Inject constructor(
         }
     }
 
-    fun setIsNotSelectedMovie() {
+    private fun setIsNotSelectedMovie() {
         _uiState.update { currentState ->
             currentState.copy(selectedMovie = null)
         }

@@ -18,7 +18,6 @@ class MovieService @Inject constructor(
 
     suspend fun getValidUsers(): List<UserModel> {
         return withContext(Dispatchers.IO) {
-            delay(500)
             listOf(UserModel("Admin", "Password*123"))
         }
     }
