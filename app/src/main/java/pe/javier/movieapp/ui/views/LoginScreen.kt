@@ -2,6 +2,7 @@
 
 package pe.javier.movieapp.ui.views
 
+import android.widget.Toast
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
@@ -29,6 +30,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -48,6 +50,7 @@ fun LoginScreen(
     sessionUiState: SessionUiState,
     modifier: Modifier
 ) {
+    val context = LocalContext.current
     var userInput by remember { mutableStateOf("") }
     var passwordInput by remember { mutableStateOf("") }
 
@@ -105,7 +108,11 @@ fun LoginScreen(
                 Button(
                     enabled = userInput.isNotEmpty() && passwordInput.isNotEmpty(),
                     onClick = {
-                        onLoginButtonClick(userInput, passwordInput)
+                        if (userInput != "Admin" || passwordInput != "Password*123") {
+                            Toast.makeText(context, R.string.login_failed, Toast.LENGTH_SHORT).show()
+                        } else {
+                            onLoginButtonClick(userInput, passwordInput)
+                        }
                     },
                     modifier = Modifier.fillMaxWidth()
                 ) {

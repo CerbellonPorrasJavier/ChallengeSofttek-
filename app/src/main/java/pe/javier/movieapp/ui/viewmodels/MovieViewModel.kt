@@ -56,7 +56,8 @@ class MovieViewModel @Inject constructor(
                 _uiState.update { currentState ->
                     currentState.copy(
                         totalMoviePage = movieList.totalPages,
-                        currentMoviePage = movieList.page)
+                        currentMoviePage = movieList.page
+                    )
                 }
                 MovieUiState.Success(movies = movieList.movies)
             } catch (e: IOException) {

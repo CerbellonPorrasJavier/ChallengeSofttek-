@@ -14,7 +14,7 @@ class GetMovieListUseCase @Inject constructor(
             repository.insertMovies(movieList.movies.map { it.toDatabase() })
             movieList
         } else {
-            ListMovie(movies = repository.getAllMoviesFromDatabase().dropLast(20))
+            ListMovie(movies = repository.getAllMoviesFromDatabase().takeLast(20))
         }
     }
 }
