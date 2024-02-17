@@ -121,14 +121,14 @@ fun MovieAppScreen(
                 LoginScreen(
                     onLoginButtonClick = { user, password ->
                         viewModel.validateUserToLogin(user, password)
-                        if (uiState.isLogin) {
-                            navController.navigate(MovieAppScreen.Movies.name)
-                        }
+                    },
+                    onLoginSuccess = {
+                        navController.navigate(MovieAppScreen.Movies.name)
                     },
                     sessionUiState = uiState,
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(dimensionResource(id = R.dimen.padding_small))
+                        .padding(dimensionResource(id = R.dimen.padding_medium))
                 )
             }
             composable(
@@ -154,10 +154,14 @@ fun MovieAppScreen(
                     )
                 }
             ) {
-                viewModel.setIsNotSelectedMovie()
                 MoviesScreen(
                     movieUiState = viewModel.movieUiState,
-                    onRetryAction = { viewModel.getMovies(page = uiState.currentMoviePage, apiKey = API_KEY) },
+                    onRetryAction = {
+                        viewModel.getMovies(
+                            page = uiState.currentMoviePage,
+                            apiKey = API_KEY
+                        )
+                    },
                     currentMoviePage = uiState.currentMoviePage,
                     totalMoviePage = uiState.totalMoviePage,
                     moveToAnotherPage = { page ->
@@ -169,7 +173,7 @@ fun MovieAppScreen(
                     },
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(dimensionResource(id = R.dimen.padding_small))
+                        .padding(dimensionResource(id = R.dimen.padding_medium))
                 )
             }
             composable(
@@ -199,7 +203,7 @@ fun MovieAppScreen(
                     selectedMovie = uiState.selectedMovie!!,
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(dimensionResource(id = R.dimen.padding_small))
+                        .padding(dimensionResource(id = R.dimen.padding_medium))
                 )
             }
         }

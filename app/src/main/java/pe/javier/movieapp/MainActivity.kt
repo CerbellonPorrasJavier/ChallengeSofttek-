@@ -33,11 +33,3 @@ class MainActivity : ComponentActivity() {
         const val API_KEY = "f46b58478f489737ad5a4651a4b25079"
     }
 }
-
-@Preview(showBackground = true)
-@Composable
-fun MovieAppPreview() {
-    MovieAppTheme {
-        MovieAppScreen()
-    }
-}

@@ -11,4 +11,7 @@
     <string name="retry">Reintentar</string>
     <string name="last_page">Página anterior</string>
     <string name="next_page">Siguiente página</string>
+    <string name="favourite_movie">Película favorita</string>
+    <string name="marked_favourite_movie">Has marcado esta película como favorita</string>
+    <string name="login_failed">Usuario o contraseña inválida</string>
 </resources>

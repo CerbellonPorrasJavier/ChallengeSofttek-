@@ -13,14 +13,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.KeyboardArrowRight
-import androidx.compose.material.icons.outlined.Place
-import androidx.compose.material.icons.sharp.Info
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -64,7 +63,6 @@ fun MoviesScreen(
             moveToAnotherPage = moveToAnotherPage,
             modifier = modifier
         )
-
         is MovieUiState.Loading -> LoadingScreen(modifier)
         is MovieUiState.Error -> ErrorScreen(onRetryAction, modifier)
     }
@@ -125,6 +123,7 @@ fun MovieGridScreen(
 
 @Composable
 fun MovieCard(movie: Movie, onMovieClicked: (movie: Movie) -> Unit, modifier: Modifier) {
+    val baseUrlPosters = "https://image.tmdb.org/t/p/w500"
     Card(
         modifier = modifier,
         onClick = { onMovieClicked(movie) },
@@ -133,7 +132,7 @@ fun MovieCard(movie: Movie, onMovieClicked: (movie: Movie) -> Unit, modifier: Mo
         Column {
             AsyncImage(
                 model = ImageRequest.Builder(context = LocalContext.current)
-                    .data(movie.posterPath)
+                    .data(baseUrlPosters + movie.posterPath)
                     .crossfade(true)
                     .build(),
                 error = painterResource(R.drawable.ic_broken_image),
@@ -156,11 +155,13 @@ fun MovieCard(movie: Movie, onMovieClicked: (movie: Movie) -> Unit, modifier: Mo
 @Composable
 fun LoadingScreen(modifier: Modifier) {
     Column(
-        modifier = modifier
+        modifier = modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         CircularProgressIndicator(
-            modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colorScheme.secondary
+            modifier = Modifier.size(64.dp),
+            color = MaterialTheme.colorScheme.primary
         )
     }
 }
