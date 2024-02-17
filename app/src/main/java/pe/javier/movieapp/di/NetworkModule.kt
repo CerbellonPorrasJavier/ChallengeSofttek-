@@ -19,7 +19,7 @@ object NetworkModule {
     @Provides
     fun provideRetrofit(): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("https://api.themoviedb.org/3/movie")
+            .baseUrl("https://api.themoviedb.org/3/movie/")
             .addConverterFactory(Json.asConverterFactory("application/json".toMediaType()))
             .addConverterFactory(GsonConverterFactory.create())
             .build()
