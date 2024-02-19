@@ -10,15 +10,15 @@ import javax.inject.Inject
 class MovieService @Inject constructor(
     private val api: MovieApiClient
 ) {
-    suspend fun getMovies(page: Int, apiKey: String): ListMovieModel? {
+    suspend fun getMovies(page: Int): ListMovieModel? {
         return withContext(Dispatchers.IO) {
-            api.getAllMovies(page = page, apiKey = apiKey).body()
+            api.getAllMovies(page = page).body()
         }
     }
 
-    suspend fun getValidUsers(): List<UserModel> {
+    suspend fun getValidUser(): UserModel? {
         return withContext(Dispatchers.IO) {
-            listOf(UserModel("Admin", "Password*123"))
+            UserModel(1,"Admin", "Password*123")
         }
     }
 

@@ -7,20 +7,24 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.ShapeDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -34,12 +38,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import pe.javier.movieapp.R
 import pe.javier.movieapp.data.model.SessionUiState
 
@@ -69,54 +74,72 @@ fun LoginScreen(
         if (sessionUiState.isLogin) {
             onLoginSuccess()
         } else {
-            Column(
-                modifier = modifier,
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
+            Box(
+                modifier = modifier.fillMaxSize()
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.outlined_local_movies),
-                    contentDescription = stringResource(
-                        id = R.string.login
-                    ),
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier.size(120.dp)
+                    painter = painterResource(id = R.drawable.login_background),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop
                 )
-                Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.padding_medium)))
-                UserTextField(
-                    label = R.string.user,
-                    leadingIcon = R.drawable.outlined_person,
-                    keyboardOptions = KeyboardOptions.Default.copy(
-                        keyboardType = KeyboardType.Text,
-                        imeAction = ImeAction.Next
-                    ),
-                    value = userInput,
-                    onValueChange = { userInput = it }
-                )
-                Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.padding_medium)))
-                PasswordTextField(
-                    label = R.string.password,
-                    leadingIcon = R.drawable.outlined_password,
-                    keyboardOptions = KeyboardOptions.Default.copy(
-                        keyboardType = KeyboardType.Text,
-                        imeAction = ImeAction.Done
-                    ),
-                    value = passwordInput,
-                    onValueChange = { passwordInput = it }
-                )
-                Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.padding_large)))
-                Button(
-                    enabled = userInput.isNotEmpty() && passwordInput.isNotEmpty(),
-                    onClick = {
-                        if (userInput != "Admin" || passwordInput != "Password*123") {
-                            Toast.makeText(context, R.string.login_failed, Toast.LENGTH_SHORT).show()
-                        } else {
-                            onLoginButtonClick(userInput, passwordInput)
-                        }
-                    },
-                    modifier = Modifier.fillMaxWidth()
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(dimensionResource(id = R.dimen.padding_medium)),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.Start
                 ) {
-                    Text(text = stringResource(id = R.string.login))
+                    Text(
+                        text = stringResource(id = R.string.login_message),
+                        style = MaterialTheme.typography.headlineLarge.copy(
+                            fontWeight = FontWeight.ExtraBold,
+                            lineHeight = 64.sp,
+                            fontSize = 64.sp
+                        )
+                    )
+                    Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.padding_triple_extra_large)))
+                    UserTextField(
+                        label = R.string.user,
+                        leadingIcon = R.drawable.outlined_person,
+                        keyboardOptions = KeyboardOptions.Default.copy(
+                            keyboardType = KeyboardType.Text,
+                            imeAction = ImeAction.Next
+                        ),
+                        value = userInput,
+                        onValueChange = { userInput = it }
+                    )
+                    Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.padding_medium)))
+                    PasswordTextField(
+                        label = R.string.password,
+                        leadingIcon = R.drawable.outlined_password,
+                        keyboardOptions = KeyboardOptions.Default.copy(
+                            keyboardType = KeyboardType.Text,
+                            imeAction = ImeAction.Done
+                        ),
+                        value = passwordInput,
+                        onValueChange = { passwordInput = it }
+                    )
+                    Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.padding_double_extra_large)))
+                    Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.padding_double_extra_large)))
+                    Button(
+                        enabled = userInput.isNotEmpty() && passwordInput.isNotEmpty(),
+                        elevation = ButtonDefaults.buttonElevation(defaultElevation = 8.dp),
+                        onClick = {
+                            if (userInput != "Admin" || passwordInput != "Password*123") {
+                                Toast.makeText(context, R.string.login_failed, Toast.LENGTH_SHORT)
+                                    .show()
+                            } else {
+                                onLoginButtonClick(userInput, passwordInput)
+                            }
+                        },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(
+                            text = stringResource(id = R.string.login),
+                            style = MaterialTheme.typography.bodyLarge,
+                            modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_medium))
+                        )
+                    }
                 }
             }
         }
@@ -138,6 +161,7 @@ fun UserTextField(
         leadingIcon = { Icon(painter = painterResource(id = leadingIcon), null) },
         label = { Text(text = stringResource(id = label)) },
         keyboardOptions = keyboardOptions,
+        shape = ShapeDefaults.ExtraLarge,
         modifier = Modifier.fillMaxWidth()
     )
 }
@@ -181,6 +205,7 @@ fun PasswordTextField(
                 )
             }
         },
+        shape = ShapeDefaults.ExtraLarge,
         modifier = Modifier.fillMaxWidth()
     )
 }

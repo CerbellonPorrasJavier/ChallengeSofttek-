@@ -7,7 +7,9 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import okhttp3.MediaType.Companion.toMediaType
 import kotlinx.serialization.json.Json
+import okhttp3.OkHttpClient
 import pe.javier.movieapp.data.network.MovieApiClient
+import pe.javier.movieapp.data.network.RequestInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
@@ -17,9 +19,17 @@ import javax.inject.Singleton
 object NetworkModule {
     @Singleton
     @Provides
-    fun provideRetrofit(): Retrofit {
+    fun provideOkHttpClient(): OkHttpClient {
+        return OkHttpClient.Builder()
+            .addInterceptor(RequestInterceptor())
+            .build()
+    }
+    @Singleton
+    @Provides
+    fun provideRetrofit(okhHttpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
             .baseUrl("https://api.themoviedb.org/3/movie/")
+            .client(okhHttpClient)
             .addConverterFactory(Json.asConverterFactory("application/json".toMediaType()))
             .addConverterFactory(GsonConverterFactory.create())
             .build()

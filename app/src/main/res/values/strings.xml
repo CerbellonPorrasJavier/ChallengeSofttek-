@@ -6,6 +6,7 @@
     <string name="user">Usuario</string>
     <string name="password">Contraseña</string>
     <string name="login">Iniciar sesión</string>
+    <string name="login_message">Inicio de sesión</string>
     <string name="movie_poster">Poster</string>
     <string name="loading_failed">Falló al cargar</string>
     <string name="retry">Reintentar</string>
@@ -13,5 +14,10 @@
     <string name="next_page">Siguiente página</string>
     <string name="favourite_movie">Película favorita</string>
     <string name="marked_favourite_movie">Has marcado esta película como favorita</string>
+    <string name="unmarked_favourite_movie">Has quitado esta película de tus favoritos</string>
     <string name="login_failed">Usuario y/o contraseña incorrecta(s)</string>
+    <string name="logout">Cerrar sesión</string>
+    <string name="release_date">Fecha de estreno: %1$s</string>
+    <string name="vote_average">Calificación promedio: %1$s</string>
+    <string name="overview">Resumen</string>
 </resources>

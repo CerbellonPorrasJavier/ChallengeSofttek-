@@ -11,10 +11,12 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import pe.javier.movieapp.data.model.MovieUiState
 import pe.javier.movieapp.data.model.SessionUiState
+import pe.javier.movieapp.domain.ClearDataUseCase
+import pe.javier.movieapp.domain.GetIfExistsIntoDatabase
 import pe.javier.movieapp.domain.GetMovieListUseCase
-import pe.javier.movieapp.domain.GetValidUsersUseCase
+import pe.javier.movieapp.domain.GetValidUserUseCase
+import pe.javier.movieapp.domain.InsertUserIntoDatabase
 import pe.javier.movieapp.domain.model.Movie
 import pe.javier.movieapp.domain.model.User
 import retrofit2.HttpException
@@ -23,23 +25,39 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MovieViewModel @Inject constructor(
-    private val getValidUsersUseCase: GetValidUsersUseCase,
+    private val getValidUserUseCase: GetValidUserUseCase,
     private val getMovieListUseCase: GetMovieListUseCase,
+    private val insertUserIntoDatabase: InsertUserIntoDatabase,
+    private val getIfExistsIntoDatabase: GetIfExistsIntoDatabase,
+    private val clearDataUseCase: ClearDataUseCase,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SessionUiState())
     val uiState: StateFlow<SessionUiState> = _uiState.asStateFlow()
 
-    var movieUiState: MovieUiState by mutableStateOf(MovieUiState.Loading)
+    var movieUiState: MovieUiState by mutableStateOf(MovieUiState.Inactive)
         private set
+
+    init {
+        validateIsLoggedIn()
+    }
+
+    private fun validateIsLoggedIn() {
+        viewModelScope.launch {
+            val isLoggedIn = getIfExistsIntoDatabase()
+            _uiState.update { currentState ->
+                currentState.copy(isLogin = isLoggedIn)
+            }
+        }
+    }
 
     fun validateUserToLogin(user: String, password: String) {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
-            val validUsers = getValidUsersUseCase.invoke()
+            val validUser = getValidUserUseCase()
             val inputUser = User(user = user, password = password)
-            if (validUsers.contains(inputUser)) {
-                setIsLoggedIn()
+            if (validUser == inputUser) {
+                setIsLoggedIn(inputUser)
             } else {
                 setIsLoggedOut()
             }
@@ -47,12 +65,11 @@ class MovieViewModel @Inject constructor(
         }
     }
 
-    fun getMovies(page: Int = 1, apiKey: String) {
+    fun getMovies(page: Int = 1) {
         viewModelScope.launch {
             movieUiState = MovieUiState.Loading
-            setIsNotSelectedMovie()
             movieUiState = try {
-                val movieList = getMovieListUseCase(page = page, apiKey = apiKey)
+                val movieList = getMovieListUseCase(page = page)
                 _uiState.update { currentState ->
                     currentState.copy(
                         totalMoviePage = movieList.totalPages,
@@ -68,16 +85,24 @@ class MovieViewModel @Inject constructor(
         }
     }
 
-    private fun setIsLoggedIn() {
-        _uiState.update { currentState ->
-            currentState.copy(isLogin = true)
+    private fun setIsLoggedIn(inputUser: User) {
+        viewModelScope.launch {
+            _uiState.update { currentState ->
+                currentState.copy(isLogin = true)
+            }
+            insertUserIntoDatabase(inputUser)
         }
     }
 
-    private fun setIsLoggedOut() {
-        _uiState.update { currentState ->
-            currentState.copy(isLogin = false)
+    fun setIsLoggedOut() {
+        viewModelScope.launch {
+            resetUiState()
+            clearDataUseCase()
         }
+    }
+
+    private fun resetUiState() {
+        _uiState.value = SessionUiState()
     }
 
     fun setSelectedMovie(movie: Movie) {
@@ -85,10 +110,11 @@ class MovieViewModel @Inject constructor(
             currentState.copy(selectedMovie = movie)
         }
     }
+}
 
-    private fun setIsNotSelectedMovie() {
-        _uiState.update { currentState ->
-            currentState.copy(selectedMovie = null)
-        }
-    }
+sealed interface MovieUiState {
+    object Inactive : MovieUiState
+    data class Success(val movies: List<Movie>) : MovieUiState
+    object Error : MovieUiState
+    object Loading : MovieUiState
 }

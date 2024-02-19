@@ -7,7 +7,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import pe.javier.movieapp.data.database.MovieDatabase
+import pe.javier.movieapp.data.database.MovieAppDatabase
 import javax.inject.Singleton
 
 @Module
@@ -18,9 +18,13 @@ object RoomModule {
 
     @Singleton
     @Provides
-    fun provideRoom(@ApplicationContext context: Context) = Room.databaseBuilder(context, MovieDatabase::class.java, MOVIE_DATABASE_NAME).build()
+    fun provideRoom(@ApplicationContext context: Context) = Room.databaseBuilder(context, MovieAppDatabase::class.java, MOVIE_DATABASE_NAME).build()
 
     @Singleton
     @Provides
-    fun provideDao(db: MovieDatabase) = db.getMovieDao()
+    fun provideMovieDao(db: MovieAppDatabase) = db.getMovieDao()
+
+    @Singleton
+    @Provides
+    fun provideUserDao(db: MovieAppDatabase) = db.getUserDao()
 }
