@@ -65,7 +65,7 @@ class MovieViewModel @Inject constructor(
         }
     }
 
-    fun getMovies(page: Int = 1) {
+    fun getMovies(page: Int = 1, isDetailScreenPermanent: Boolean = false) {
         viewModelScope.launch {
             movieUiState = MovieUiState.Loading
             movieUiState = try {
@@ -73,6 +73,7 @@ class MovieViewModel @Inject constructor(
                 _uiState.update { currentState ->
                     currentState.copy(
                         totalMoviePage = movieList.totalPages,
+                        selectedMovie = if (isDetailScreenPermanent) movieList.movies.first() else  null,
                         currentMoviePage = movieList.page
                     )
                 }
@@ -105,7 +106,7 @@ class MovieViewModel @Inject constructor(
         _uiState.value = SessionUiState()
     }
 
-    fun setSelectedMovie(movie: Movie) {
+    fun setSelectedMovie(movie: Movie?) {
         _uiState.update { currentState ->
             currentState.copy(selectedMovie = movie)
         }

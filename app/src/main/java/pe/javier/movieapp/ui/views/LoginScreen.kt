@@ -47,9 +47,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import pe.javier.movieapp.R
 import pe.javier.movieapp.data.model.SessionUiState
+import pe.javier.movieapp.ui.utils.MovieContentType
 
 @Composable
 fun LoginScreen(
+    movieContentType: MovieContentType,
     onLoginButtonClick: (user: String, password: String) -> Unit,
     onLoginSuccess: () -> Unit,
     sessionUiState: SessionUiState,
@@ -80,12 +82,16 @@ fun LoginScreen(
                 Image(
                     painter = painterResource(id = R.drawable.login_background),
                     contentDescription = null,
-                    contentScale = ContentScale.Crop
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxSize()
                 )
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(dimensionResource(id = R.dimen.padding_medium)),
+                        .padding(
+                            if (movieContentType == MovieContentType.LIST_ONLY) dimensionResource(id = R.dimen.padding_medium)
+                            else dimensionResource(id = R.dimen.padding_double_extra_large)
+                        ),
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.Start
                 ) {
@@ -93,8 +99,8 @@ fun LoginScreen(
                         text = stringResource(id = R.string.login_message),
                         style = MaterialTheme.typography.headlineLarge.copy(
                             fontWeight = FontWeight.ExtraBold,
-                            lineHeight = 64.sp,
-                            fontSize = 64.sp
+                            lineHeight = if (movieContentType == MovieContentType.LIST_ONLY) 64.sp else 120.sp,
+                            fontSize = if (movieContentType == MovieContentType.LIST_ONLY) 64.sp else 120.sp
                         )
                     )
                     Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.padding_triple_extra_large)))

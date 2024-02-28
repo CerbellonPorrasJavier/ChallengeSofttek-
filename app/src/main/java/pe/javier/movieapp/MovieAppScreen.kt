@@ -13,7 +13,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -21,12 +20,12 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -35,6 +34,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import pe.javier.movieapp.MainActivity.Companion.ANIMATION_TIME
+import pe.javier.movieapp.ui.utils.MovieContentType
 import pe.javier.movieapp.ui.viewmodels.MovieViewModel
 import pe.javier.movieapp.ui.views.DetailsScreen
 import pe.javier.movieapp.ui.views.LoginScreen
@@ -94,9 +94,17 @@ fun MovieAppBar(
 
 @Composable
 fun MovieAppScreen(
+    windowSize: WindowWidthSizeClass,
     viewModel: MovieViewModel = hiltViewModel(),
     navController: NavHostController = rememberNavController()
 ) {
+    val movieContentType: MovieContentType = when (windowSize) {
+        WindowWidthSizeClass.Compact -> MovieContentType.LIST_ONLY
+        WindowWidthSizeClass.Medium -> MovieContentType.LIST_AND_EXPANDED_DETAIL
+        WindowWidthSizeClass.Expanded -> MovieContentType.LIST_AND_PERMANENT_DETAIL
+        else -> MovieContentType.LIST_ONLY
+    }
+
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentScreen = MovieAppScreen.valueOf(
         backStackEntry?.destination?.route ?: MovieAppScreen.Login.name
@@ -147,6 +155,7 @@ fun MovieAppScreen(
                 }
             ) {
                 LoginScreen(
+                    movieContentType = movieContentType,
                     onLoginButtonClick = { user, password ->
                         viewModel.validateUserToLogin(user, password)
                     },
@@ -182,17 +191,41 @@ fun MovieAppScreen(
             ) {
                 MoviesScreen(
                     movieUiState = viewModel.movieUiState,
+                    selectedMovie = uiState.selectedMovie,
+                    movieContentType = movieContentType,
                     onCreateAndRetryAction = {
-                        viewModel.getMovies(page = uiState.currentMoviePage)
+                        viewModel.getMovies(
+                            page = uiState.currentMoviePage,
+                            isDetailScreenPermanent = movieContentType == MovieContentType.LIST_AND_PERMANENT_DETAIL
+                        )
                     },
                     currentMoviePage = uiState.currentMoviePage,
                     totalMoviePage = uiState.totalMoviePage,
                     moveToAnotherPage = { page ->
-                        viewModel.getMovies(page = page)
+                        viewModel.getMovies(
+                            page = page,
+                            isDetailScreenPermanent = movieContentType == MovieContentType.LIST_AND_PERMANENT_DETAIL
+                        )
                     },
                     onMovieClicked = { movie ->
-                        viewModel.setSelectedMovie(movie)
-                        navController.navigate(MovieAppScreen.MovieDetails.name)
+                        when (movieContentType) {
+                            MovieContentType.LIST_ONLY -> {
+                                viewModel.setSelectedMovie(movie)
+                                navController.navigate(MovieAppScreen.MovieDetails.name)
+                            }
+
+                            MovieContentType.LIST_AND_EXPANDED_DETAIL -> {
+                                if (movie == uiState.selectedMovie) {
+                                    viewModel.setSelectedMovie(null)
+                                } else {
+                                    viewModel.setSelectedMovie(movie)
+                                }
+                            }
+
+                            else -> {
+                                viewModel.setSelectedMovie(movie)
+                            }
+                        }
                     },
                     modifier = Modifier.fillMaxSize()
                 )
