@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -20,6 +21,7 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import pe.javier.movieapp.R
@@ -57,13 +59,14 @@ fun MovieDetailContent(
         ) {
             AsyncImage(
                 model = ImageRequest.Builder(context = LocalContext.current)
-                    .data(baseUrlPosters + selectedMovie?.posterPath)
+                    .data(selectedMovie?.posterPath?.let { baseUrlPosters + it } ?: "")
                     .crossfade(true)
                     .build(),
                 error = painterResource(R.drawable.ic_broken_image),
                 placeholder = painterResource(R.drawable.loading_img),
                 contentDescription = stringResource(R.string.movie_poster),
-                contentScale = ContentScale.Crop
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.heightIn(min = 300.dp)
             )
         }
         Spacer(modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_small)))

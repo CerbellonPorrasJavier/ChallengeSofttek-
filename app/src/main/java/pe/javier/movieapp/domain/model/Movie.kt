@@ -6,7 +6,7 @@ import pe.javier.movieapp.data.model.MovieModel
 data class Movie(
     val id: Long,
     val title: String,
-    val posterPath: String,
+    val posterPath: String?,
     val overview: String,
     val releaseDate: String,
     val voteAverage: Double

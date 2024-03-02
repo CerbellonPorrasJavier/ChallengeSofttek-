@@ -57,7 +57,12 @@ fun MovieAppBar(
 ) {
     if (currentScreen != MovieAppScreen.valueOf(MovieAppScreen.Login.name)) {
         TopAppBar(
-            title = { Text(stringResource(currentScreen.title)) },
+            title = {
+                Text(
+                    text = stringResource(currentScreen.title),
+                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                )
+            },
             colors = TopAppBarDefaults.mediumTopAppBarColors(
                 containerColor = MaterialTheme.colorScheme.primaryContainer
             ),
@@ -67,6 +72,7 @@ fun MovieAppBar(
                     IconButton(onClick = navigateUp) {
                         Icon(
                             imageVector = Icons.Filled.ArrowBack,
+                            tint = MaterialTheme.colorScheme.onPrimaryContainer,
                             contentDescription = stringResource(R.string.back_button)
                         )
                     }
@@ -82,7 +88,7 @@ fun MovieAppBar(
                     ) {
                         Icon(
                             imageVector = Icons.Default.ExitToApp,
-                            tint = Color.Black,
+                            tint = MaterialTheme.colorScheme.onPrimaryContainer,
                             contentDescription = stringResource(id = R.string.logout)
                         )
                     }

@@ -13,9 +13,9 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -31,6 +31,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -217,13 +218,14 @@ fun MovieDetailColumn(
         ) {
             AsyncImage(
                 model = ImageRequest.Builder(context = LocalContext.current)
-                    .data(baseUrlPosters + selectedMovie.posterPath)
+                    .data(selectedMovie.posterPath?.let { baseUrlPosters + it } ?: "")
                     .crossfade(true)
                     .build(),
                 error = painterResource(R.drawable.ic_broken_image),
                 placeholder = painterResource(R.drawable.loading_img),
                 contentDescription = stringResource(R.string.movie_poster),
-                contentScale = ContentScale.Crop
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.heightIn(min = 250.dp)
             )
         }
         Spacer(modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_small)))
@@ -278,12 +280,14 @@ fun BottomNavigationBar(
             enabled = currentMoviePage > 1
         ) {
             Icon(
-                Icons.Filled.KeyboardArrowLeft,
-                stringResource(id = R.string.last_page)
+                imageVector = Icons.Filled.KeyboardArrowLeft,
+                tint = if (currentMoviePage > 1) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.primaryContainer,
+                contentDescription = stringResource(id = R.string.last_page)
             )
         }
         Text(
             text = currentMoviePage.toString(),
+            color = MaterialTheme.colorScheme.onPrimaryContainer,
             style = MaterialTheme.typography.headlineSmall,
         )
         IconButton(
@@ -291,8 +295,9 @@ fun BottomNavigationBar(
             enabled = currentMoviePage < totalMoviePage
         ) {
             Icon(
-                Icons.Filled.KeyboardArrowRight,
-                stringResource(id = R.string.next_page)
+                imageVector = Icons.Filled.KeyboardArrowRight,
+                tint = if (currentMoviePage < totalMoviePage) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.primaryContainer,
+                contentDescription = stringResource(id = R.string.next_page)
             )
         }
     }
@@ -311,17 +316,21 @@ fun MovieCard(
         onClick = { onMovieClicked(movie) },
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
     ) {
-        Column {
+        Column(
+            modifier = Modifier.background(color = MaterialTheme.colorScheme.primaryContainer)
+        ) {
             AsyncImage(
                 model = ImageRequest.Builder(context = LocalContext.current)
-                    .data(baseUrlPosters + movie.posterPath)
+                    .data(movie.posterPath?.let { baseUrlPosters + it } ?: "")
                     .crossfade(true)
                     .build(),
                 error = painterResource(R.drawable.ic_broken_image),
                 placeholder = painterResource(R.drawable.loading_img),
                 contentDescription = stringResource(R.string.movie_poster),
-                modifier = Modifier.aspectRatio(0.6f),
-                contentScale = ContentScale.Crop
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .aspectRatio(0.6f)
+                    .background(color = Color.Black)
             )
             Row(
                 horizontalArrangement = Arrangement.Center,
@@ -330,6 +339,8 @@ fun MovieCard(
             ) {
                 Text(
                     text = movie.title,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                    maxLines = 1,
                     style = if (movieContentType == MovieContentType.LIST_ONLY) MaterialTheme.typography.bodySmall
                     else MaterialTheme.typography.bodyLarge
                 )

@@ -18,8 +18,8 @@ data class MovieEntity(
     val releaseDate: String,
     @ColumnInfo(name = "vote_average")
     val voteAverage: Double,
-    @ColumnInfo(name = "poster_path")
-    val posterPath: String
+    @ColumnInfo(name = "poster_path", defaultValue = "")
+    val posterPath: String?
 )
 
 fun Movie.toDatabase() = MovieEntity(
